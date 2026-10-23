@@ -1,6 +1,7 @@
 # Python Queue 1
 
 Read the Abstract Data Types lecture (Queue section) before you start.
+https://drive.google.com/file/d/1jXGQdSvuUYjGXl-PUuHMUzKWEBGQoARL/view?usp=sharing
 
 **Rules for this assignment**
 
