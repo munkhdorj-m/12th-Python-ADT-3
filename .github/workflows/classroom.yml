@@ -1,0 +1,155 @@
+name: Autograding Tests
+
+on:
+  push:
+    paths:
+      - 'assignment.py'
+      - 'test_assignment.py'
+  workflow_dispatch:
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install pytest
+        run: pip install -r requirements.txt
+
+      - name: Ex 1 - Stack set up
+        id: ex1_initial_stack
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Stack set up
+          command: pytest test_assignment.py::test1_initial_stack
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Push
+        id: ex1_push
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Push
+          command: pytest test_assignment.py::test1_push
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Push when full
+        id: ex1_push_when_full
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Push when full
+          command: pytest test_assignment.py::test1_push_when_full
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Pop
+        id: ex1_pop
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Pop
+          command: pytest test_assignment.py::test1_pop
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Pop when empty
+        id: ex1_pop_when_empty
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Pop when empty
+          command: pytest test_assignment.py::test1_pop_when_empty
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - Uses TopOfStack
+        id: ex1_uses_top_of_stack
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - Uses TopOfStack
+          command: pytest test_assignment.py::test1_uses_top_of_stack
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - GetText
+        id: ex1_get_text
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - GetText
+          command: pytest test_assignment.py::test1_get_text
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 1 - GetText keeps stack
+        id: ex1_get_text_keeps_stack
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 1 - GetText keeps stack
+          command: pytest test_assignment.py::test1_get_text_keeps_stack
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Binary
+        id: ex2_binary
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Binary
+          command: pytest test_assignment.py::test2_binary
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Stack empty after
+        id: ex2_stack_empty_after
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Stack empty after
+          command: pytest test_assignment.py::test2_stack_empty_after
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Starts with empty stack
+        id: ex2_starts_with_empty_stack
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Starts with empty stack
+          command: pytest test_assignment.py::test2_starts_with_empty_stack
+          timeout: 2
+          max-score: 1
+
+      - name: Ex 2 - Uses the stack
+        id: ex2_uses_the_stack
+        uses: classroom-resources/autograding-command-grader@v1
+        with:
+          test-name: Ex 2 - Uses the stack
+          command: pytest test_assignment.py::test2_uses_the_stack
+          timeout: 2
+          max-score: 1
+
+      - name: Autograding Reporter
+        uses: classroom-resources/autograding-grading-reporter@v1
+        env:
+          EX1_INITIAL_STACK_RESULTS: "${{ steps.ex1_initial_stack.outputs.result }}"
+          EX1_PUSH_RESULTS: "${{ steps.ex1_push.outputs.result }}"
+          EX1_PUSH_WHEN_FULL_RESULTS: "${{ steps.ex1_push_when_full.outputs.result }}"
+          EX1_POP_RESULTS: "${{ steps.ex1_pop.outputs.result }}"
+          EX1_POP_WHEN_EMPTY_RESULTS: "${{ steps.ex1_pop_when_empty.outputs.result }}"
+          EX1_USES_TOP_OF_STACK_RESULTS: "${{ steps.ex1_uses_top_of_stack.outputs.result }}"
+          EX1_GET_TEXT_RESULTS: "${{ steps.ex1_get_text.outputs.result }}"
+          EX1_GET_TEXT_KEEPS_STACK_RESULTS: "${{ steps.ex1_get_text_keeps_stack.outputs.result }}"
+          EX2_BINARY_RESULTS: "${{ steps.ex2_binary.outputs.result }}"
+          EX2_STACK_EMPTY_AFTER_RESULTS: "${{ steps.ex2_stack_empty_after.outputs.result }}"
+          EX2_STARTS_WITH_EMPTY_STACK_RESULTS: "${{ steps.ex2_starts_with_empty_stack.outputs.result }}"
+          EX2_USES_THE_STACK_RESULTS: "${{ steps.ex2_uses_the_stack.outputs.result }}"
+        with:
+          runners: ex1_initial_stack,ex1_push,ex1_push_when_full,ex1_pop,ex1_pop_when_empty,ex1_uses_top_of_stack,ex1_get_text,ex1_get_text_keeps_stack,ex2_binary,ex2_stack_empty_after,ex2_starts_with_empty_stack,ex2_uses_the_stack
