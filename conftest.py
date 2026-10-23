@@ -5,17 +5,15 @@ import pytest
 HINTS = [
     ["local variable",
      "Your function changes a global variable without saying so.\n"
-     "Add this line at the top of the function:\n"
-     "    global Stack, TopOfStack"],
+     "Add a global line at the top of the function, for example:\n"
+     "    global Queue, HeadPointer, TailPointer\n"
+     "    global CircularQueue, CircularHead, CircularTail, NumberItems"],
 
     ["index out of range",
      "You used an index outside the array.\n"
-     "  - Did you fill Stack with 8 elements (all \"\") at the start?\n"
-     "  - Does Push check for full (TopOfStack == 7) BEFORE adding 1?"],
-
-    ["can only concatenate str",
-     "You tried to join a string and a number with +.\n"
-     "Change the number into a string first, for example:  str(1)"],
+     "  - Did you fill the queue with 6 elements (all \"\") at the start?\n"
+     "  - Does Enqueue check for full BEFORE adding 1 to the tail?\n"
+     "  - Circular queue: does the pointer go back to 0 when it reaches 6?"],
 
     ["'NoneType' object",
      "Something is None (nothing). A function probably forgot to 'return'\n"
