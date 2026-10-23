@@ -1,65 +1,71 @@
-# Python Stack 2
+# Python Queue 1
 
-Read the Abstract Data Types lecture (Stack section) before you start.
+Read the Abstract Data Types lecture (Queue section) before you start.
 
 **Rules for this assignment**
 
+- Do **not** use `.append()` or `.pop()` inside the Enqueue and Dequeue functions.
+  Move the pointers yourself and store with `Queue[TailPointer] = ...`. The tests check for this.
 - Functions **return** their answer — do not print.
-- Use `global Stack, TopOfStack` in every function that changes them.
+- Use `global` for every queue variable a function changes.
+
+---
 
 ## Exercise 1
 
 **Problem:**
 
-An "undo" stack for a text editor. Every word you type is pushed onto the
-stack. Undo pops the last word off.
+Build a **linear queue** of names for a ticket line.
 
-Set up the stack:
+Set up the queue:
 
-- `Stack` → a global array of **8** elements, all set to `""` (empty string)
-- `TopOfStack` → a global integer, set to `-1`
+- `Queue` → a global array of **6** elements, all set to `""` (empty string)
+- `HeadPointer` → a global integer, set to `-1`
+- `TailPointer` → a global integer, set to `-1`
 
-Then write three functions:
+Then write two functions:
 
-`Push(Word)`
+`Enqueue(Name)`
 
-- If the stack is full (`TopOfStack` is 7), return `False`
-- Otherwise add 1 to `TopOfStack`, store `Word` at `Stack[TopOfStack]`,
+- If the queue is full (`TailPointer` is 5), return `False`
+- Otherwise add 1 to `TailPointer`, store `Name` at `Queue[TailPointer]`,
   and return `True`
+- If this is the **first** item ever (`HeadPointer` is -1), set `HeadPointer` to 0
 
-`Pop()`
+`Dequeue()`
 
-- If the stack is empty, return `""` (empty string)
-- Otherwise return the word at `Stack[TopOfStack]`, and take 1 off `TopOfStack`
-
-`GetText()`
-
-- Return all the words in the stack, from the **bottom** (`Stack[0]`) up to
-  the **top** (`Stack[TopOfStack]`), with **one space** between each word
-- Return `""` if the stack is empty
-- Do **not** change the stack
+- If the queue is empty (`HeadPointer` is -1, or `HeadPointer` is more than
+  `TailPointer`), return `""`
+- Otherwise return the name at `Queue[HeadPointer]`, and add 1 to `HeadPointer`
 
 **Example:**
 
     Input:
-      Push("I")
-      Push("love")
-      Push("Python")
-      print(GetText())
-      print(Pop())
-      print(GetText())
-      Push("cats")
-      print(GetText())
+      print(Enqueue("Bat"))
+      print(Enqueue("Saraa"))
+      print(Enqueue("Anu"))
+      print(Dequeue())
+      print(Dequeue())
+      print(HeadPointer, TailPointer)
 
     Output:
-      I love Python
-      Python
-      I love
-      I love cats
+      True
+      True
+      True
+      Bat
+      Saraa
+      2 2
 
-*Hint:* after `Pop()`, the word `"Python"` is still in the array — only
-`TopOfStack` moved. So `GetText()` must stop at `TopOfStack`, not at the end
-of the array.
+**This is a linear queue.** After 6 names have joined, `Enqueue` returns
+`False` — even if some names have already left. That is the problem the
+circular queue in Exercise 2 fixes.
+
+    Input:
+      Enqueue 6 names, then Dequeue() twice, then:
+      print(Enqueue("G"))
+
+    Output:
+      False
 
 ---
 
@@ -67,40 +73,106 @@ of the array.
 
 **Problem:**
 
-`DecimalToBinary(Number)`
+Build a **circular queue** that reuses the free spaces.
 
-`Number` is a whole number from `0` to `255`. Use **your stack** to change it
-into a binary string.
+Set up the queue:
 
-1. **Empty the stack first** by setting `TopOfStack` to `-1`.
-2. If `Number` is `0`, return `"0"`.
-3. While `Number` is more than 0:
-    - Push the remainder `Number % 2` onto the stack **as a string**
-    - Divide `Number` by 2 with `//`
-4. Pop every digit off the stack, joining them into one string, and return it.
+- `CircularQueue` → a global array of **6** elements, all set to `""`
+- `CircularHead` and `CircularTail` → global integers, both set to `-1`
+- `NumberItems` → a global integer, set to `0`
 
-Do **not** use `bin()` or `format()`.
+Then write three functions:
+
+`CircularEnqueue(Name)`
+
+- If the queue is full (`NumberItems` is 6), return `False`
+- If the queue is empty, set `CircularHead` and `CircularTail` to 0
+- Otherwise add 1 to `CircularTail` — and if it reaches **6**, set it back to **0**
+- Store `Name` at `CircularQueue[CircularTail]`, add 1 to `NumberItems`, return `True`
+
+`CircularDequeue()`
+
+- If the queue is empty (`NumberItems` is 0), return `""`
+- Otherwise read the name at `CircularQueue[CircularHead]`
+- Add 1 to `CircularHead` — and if it reaches **6**, set it back to **0**
+- Take 1 off `NumberItems`
+- If the queue is now empty, set `CircularHead` and `CircularTail` back to `-1`
+- Return the name
+
+`ShowQueue()`
+
+- Return all the names from the **front** to the **back** of the queue,
+  with `", "` between them. Return `""` if the queue is empty.
+- Start at `CircularHead` and take `NumberItems` steps — remember to wrap
+  back to 0 when you reach the end of the array.
+- Do **not** change the queue.
 
 **Example:**
 
-    Input:                      Output:
-      DecimalToBinary(5)          "101"
-      DecimalToBinary(10)         "1010"
-      DecimalToBinary(255)        "11111111"
-      DecimalToBinary(0)          "0"
+    Input:
+      Enqueue A, B, C, D, E, F
+      print(CircularEnqueue("X"))
+      CircularDequeue()
+      CircularDequeue()
+      CircularDequeue()
+      print(CircularEnqueue("G"))
+      print(CircularEnqueue("H"))
+      print(CircularTail)
+      print(ShowQueue())
 
-How it works for `13`:
+    Output:
+      False
+      True
+      True
+      1
+      D, E, F, G, H
 
-    13 % 2 = 1   push "1"     13 // 2 = 6
-     6 % 2 = 0   push "0"      6 // 2 = 3
-     3 % 2 = 1   push "1"      3 // 2 = 1
-     1 % 2 = 1   push "1"      1 // 2 = 0   stop
+`G` was stored at index 0 and `H` at index 1 — the tail **wrapped around**.
+`ShowQueue()` still lists them in queue order: D, E, F, then G, H.
 
-    Stack (bottom → top):  "1"  "0"  "1"  "1"
-    Pop them all:          "1"  "1"  "0"  "1"   →   "1101"
+---
 
-The remainders come out in the **wrong** order, and the stack turns them
-around — Last In, First Out.
+## Exercise 3
 
-Why is the stack size 8? The biggest number, 255, is `11111111` — exactly 8 digits.
+**Problem:**
 
+`HotPotato(Names, Passes)`
+
+A party game. Everyone stands in a circle and passes a hot potato. After
+`Passes` passes, whoever is holding the potato is **out**. Keep going until one
+person is left — the **winner**.
+
+Use **your circular queue** from Exercise 2:
+
+1. **Empty the queue first:** set `CircularHead` and `CircularTail` to `-1`
+   and `NumberItems` to `0`.
+2. Enqueue every name in `Names` (there are at most 6).
+3. While more than one person is in the queue:
+    - Do `Passes` passes. One pass = dequeue the person at the front and
+      enqueue them again at the back.
+    - Dequeue the person now at the front — they are out.
+4. Return the name of the last person left. If `Names` is empty, return `""`.
+
+**Example:**
+
+    Input:
+      print(HotPotato(["Bat", "Saraa", "Anu", "Dorj", "Tuya"], 2))
+
+    Output:
+      Dorj
+
+How it works (front of the queue on the left):
+
+    Start:                       Bat Saraa Anu Dorj Tuya
+    2 passes -> Anu is out:      Dorj Tuya Bat Saraa
+    2 passes -> Bat is out:      Saraa Dorj Tuya
+    2 passes -> Tuya is out:     Saraa Dorj
+    2 passes -> Saraa is out:    Dorj          <- winner
+
+    Input:                                         Output:
+      HotPotato(["Bat", "Saraa", "Anu"], 1)          Anu
+      HotPotato(["Bat"], 4)                          Bat
+
+The queue keeps going round and round — that only works because it is **circular**.
+
+---
